@@ -8,31 +8,31 @@ class BaseSimple1
 public:
     int i;
 };
-static_assert (std::is_standard_layout<BaseSimple1>::value, "Standard layout");
+static_assert (std::is_standard_layout<BaseSimple1>::value, "Must be Standard layout");
 
 class BaseSimple2
 {
 public:
     char c;
 };
-static_assert (std::is_standard_layout<BaseSimple2>::value, "Standard layout");
+static_assert (std::is_standard_layout<BaseSimple2>::value, "Must be Standard layout");
 
 class DerrivedSimple1 : public BaseSimple1
 {// NO additional non-static data
 };
-static_assert (std::is_standard_layout<DerrivedSimple1>::value, "Standard layout");
+static_assert (std::is_standard_layout<DerrivedSimple1>::value, "Must be Standard layout");
 
 class DerrivedSimple2 : public BaseSimple1
 {// additional non-static data
 public:
     char c;
 };
-static_assert (!std::is_standard_layout<DerrivedSimple2>::value, "NOT standard layout");
+static_assert (!std::is_standard_layout<DerrivedSimple2>::value, "Must be NOT standard layout");
 
 class DerrivedSimple : public BaseSimple1, public BaseSimple2
 {
 };
-static_assert (!std::is_standard_layout<DerrivedSimple>::value, "NOT standard layout");
+static_assert (!std::is_standard_layout<DerrivedSimple>::value, "Must be NOT standard layout");
 
 class BaseVirtual1
 {
@@ -40,7 +40,7 @@ public:
     int i;
     virtual ~BaseVirtual1() = default;
 };
-static_assert (!std::is_standard_layout<BaseVirtual1>::value, "NOT standard layout");
+static_assert (!std::is_standard_layout<BaseVirtual1>::value, "Must be NOT standard layout");
 
 class DerrivedVirtual : public BaseSimple1, public BaseSimple2
 {
@@ -48,14 +48,14 @@ public:
     int d;
     virtual void f() {}
 };
-static_assert (!std::is_standard_layout<DerrivedVirtual>::value, "NOT standard layout");
+static_assert (!std::is_standard_layout<DerrivedVirtual>::value, "Must be NOT standard layout");
 
 class DerrivedMultipleVirtual : public BaseSimple1, public BaseSimple2, public BaseVirtual1
 {
 public:
     int f;
 };
-static_assert (!std::is_standard_layout<DerrivedMultipleVirtual>::value, "NOT standard layout");
+static_assert (!std::is_standard_layout<DerrivedMultipleVirtual>::value, "Must be NOT standard layout");
 
 int main(int argc, char *argv[])
 {
