@@ -75,6 +75,18 @@ struct G
     S2 s2;
 };
 
+struct H
+{
+    uint8_t c1;
+    uint8_t c2;
+    uint8_t c3;
+};
+struct H2
+{
+    H h1;
+    H h2;
+};
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -88,6 +100,8 @@ int main(int argc, char *argv[])
     qDebug() << "E" << sizeof(E);
     qDebug() << "F" << sizeof(F);
     qDebug() << "G" << sizeof(G);
+    qDebug() << "H" << sizeof(H);
+    qDebug() << "H2" << sizeof(H2);
 
     return a.exec();
 }
