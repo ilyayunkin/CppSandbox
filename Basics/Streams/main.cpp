@@ -28,6 +28,13 @@ int main(int argc, char *argv[])
         }
         cout << '\n';
     }
+    {
+        string nameSurname;
+        cout << "Enter your name and surname: ";
+        getline(cin, nameSurname);
+        cout << "You've input " << nameSurname << '\n';
+        cout << "Length= " << nameSurname.length() << '\n';
+    }
 
     return a.exec();
 }
