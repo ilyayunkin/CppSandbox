@@ -22,13 +22,23 @@ void Server::clientConnected()
             server.nextPendingConnection();
     if(clientSocket != nullptr)
     {
-        QObject::connect(clientSocket, SIGNAL(disconnected()),
-                         clientSocket, SLOT(deleteLater()));
+        QObject::connect(clientSocket, &QTcpSocket::disconnected,
+                         this, &Server::clientDisconnected);
         connect(clientSocket, &QTcpSocket::readyRead,
                 this, &Server::dataReceived);
+        sockets_.push_back(clientSocket);
 
         qDebug() << "Client connected";
     }
+}
+
+void Server::clientDisconnected()
+{
+    qDebug() << "Client disconnected";
+    QTcpSocket *const clientSocket =
+            dynamic_cast<QTcpSocket *>(sender());
+    sockets_.removeAll(clientSocket);
+    clientSocket->deleteLater();
 }
 
 void Server::dataReceived()
@@ -45,4 +55,7 @@ void Server::dataReceived()
 
     chat_+= "\r\n" + clientSocket->readAll();
     chatChanged(chat_);
+
+    for(auto socket : sockets_)
+        socket->write(chat_.toUtf8());
 }

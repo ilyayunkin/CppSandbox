@@ -13,6 +13,8 @@ Client::Client(QObject *parent)
             this, &Client::onConnected);
     connect(&socket, static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
             this, &Client::onError);
+    connect(&socket, &QTcpSocket::readyRead,
+            this, &Client::onDataReceived);
 
     socket.connectToHost("localhost", 7050);
 }
@@ -24,11 +26,7 @@ void Client::sendMessage(QString message)
 
 void Client::onConnected()
 {
-//    QTimer *const timer = new QTimer(this);
-//    connect(timer, &QTimer::timeout,
-//            this, &Client::timeout);
-//    const int oneSecond = 1000;
-//    timer->start(oneSecond);
+    qDebug() << "Connected";
 }
 
 void Client::onError(QAbstractSocket::SocketError socketError)
@@ -45,4 +43,10 @@ void Client::onError(QAbstractSocket::SocketError socketError)
     const QString errorText = (value != nullptr) ? value : "Unknown error";
 
     emit error(errorText);
+}
+
+void Client::onDataReceived()
+{
+    qDebug() << "Data received";
+    emit chatChanged(socket.readAll());
 }

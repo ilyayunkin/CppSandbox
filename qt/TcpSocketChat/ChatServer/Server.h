@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpServer>
+#include <QList>
 
 class Server : public QObject
 {
@@ -14,7 +15,10 @@ signals:
 private:
     QTcpServer server;
     QString chat_;
+    QList<QTcpSocket*> sockets_;
+
     void clientConnected();
+    void clientDisconnected();
     void dataReceived();
 };
 

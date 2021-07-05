@@ -16,7 +16,11 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0" colspan="2">
-     <widget class="QTextEdit" name="chatTextEdit"/>
+     <widget class="QTextEdit" name="chatTextEdit">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item row="2" column="0">
      <widget class="QLineEdit" name="messageLineEdit"/>

@@ -15,11 +15,13 @@ public slots:
 signals:
     void connected();
     void error(QString);
+    void chatChanged(QString);
 
 private:
     QTcpSocket socket;
     void onConnected();
     void onError(QAbstractSocket::SocketError socketError);
+    void onDataReceived(void);
 };
 
 #endif // CLIENT_H

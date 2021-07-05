@@ -12,6 +12,8 @@ int main(int argc, char *argv[])
     Client client;
     QObject::connect(&w, &MainWindow::newMessage,
                      &client, &Client::sendMessage);
+    QObject::connect(&client, &Client::chatChanged,
+                     &w, &MainWindow::setChat);
 
     return a.exec();
 }

@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    connect(ui->messageLineEdit, &QLineEdit::returnPressed,
+            this, &MainWindow::on_sendButtonButton_clicked);
 }
 
 MainWindow::~MainWindow()
@@ -17,4 +19,10 @@ MainWindow::~MainWindow()
 void MainWindow::on_sendButtonButton_clicked()
 {
     emit newMessage(ui->messageLineEdit->text());
+    ui->messageLineEdit->clear();
+}
+
+void MainWindow::setChat(QString chat)
+{
+    ui->chatTextEdit->setText(chat);
 }
