@@ -21,7 +21,8 @@ private:
     QTcpSocket socket;
     void onConnected();
     void onError(QAbstractSocket::SocketError socketError);
-    void onDataReceived(void);
+    void onDataReceived();
+    void onDisconnected();
 };
 
 #endif // CLIENT_H

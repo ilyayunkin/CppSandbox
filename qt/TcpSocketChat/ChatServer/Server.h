@@ -10,6 +10,7 @@ class Server : public QObject
     Q_OBJECT
 public:
     explicit Server(QObject *parent = nullptr);
+
 signals:
     void chatChanged(QString chat);
 private:
@@ -21,6 +22,7 @@ private:
     void clientConnected();
     void clientDisconnected();
     void dataReceived();
+    void updateChat();
 };
 
 #endif // SERVER_H

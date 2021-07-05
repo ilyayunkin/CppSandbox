@@ -1,6 +1,8 @@
 #include "Client.h"
 #include <QMetaEnum>
 #include <QInputDialog>
+#include <QMessageBox>
+#include <QApplication>
 
 Client::Client(QObject *parent)
     : QObject(parent)
@@ -9,6 +11,8 @@ Client::Client(QObject *parent)
             SIGNAL(connected()));
     connect(&socket, SIGNAL(disconnected()),
             SIGNAL(disconnected()));
+    connect(&socket, &QTcpSocket::disconnected,
+            this, &Client::onDisconnected);
 
     connect(&socket, &QTcpSocket::connected,
             this, &Client::onConnected);
@@ -60,4 +64,10 @@ void Client::onDataReceived()
 {
     qDebug() << "Data received";
     emit chatChanged(socket.readAll());
+}
+
+void Client::onDisconnected()
+{
+//    QMessageBox::critical(nullptr, tr("Server disconnected"), tr("Chat will be closed"));
+//    QApplication::quit();
 }
