@@ -2,6 +2,8 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QTcpSocket>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 Server::Server(QObject *parent)
     : QObject(parent)
@@ -51,11 +53,45 @@ void Server::dataReceived()
            QString("QTcpSocket"));
     assert(clientSocket != nullptr);
 
-    QDataStream dataStream(clientSocket);
+    auto data = clientSocket->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    if(!doc.isObject()){
+        qDebug() << "Not an object:" << data;
+        return;
+    }
 
-    chat_+= "\r\n" + clientSocket->readAll();
-    chatChanged(chat_);
+    auto obj = doc.object();
+    if(!obj.contains("command")){
+        qDebug() << "No command:" << data;
+        return;
+    }
 
-    for(auto socket : sockets_)
-        socket->write(chat_.toUtf8());
+    auto command = obj.value("command").toString();
+    if(command == "message"){
+        if(!obj.contains("text")){
+            qDebug() << "No text:" << data;
+            return;
+        }
+        auto text = obj.value("text").toString();
+
+        auto clientName = names_[clientSocket];
+        chat_+= "\r\n" + clientName + ":" + text;
+        emit chatChanged(chat_);
+
+        for(auto socket : sockets_)
+            socket->write(chat_.toUtf8());
+    }else if(command == "name"){
+            if(!obj.contains("name")){
+                qDebug() << "No name:" << data;
+                return;
+            }
+            auto name = obj.value("name").toString();
+
+            names_[clientSocket] = name;
+            chat_+= "\r\n" + name + " joined the chat!";
+            emit chatChanged(chat_);
+
+            for(auto socket : sockets_)
+                socket->write(chat_.toUtf8());
+        }
 }

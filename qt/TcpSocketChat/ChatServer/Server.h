@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QTcpServer>
 #include <QList>
-
+#include <unordered_map>
 class Server : public QObject
 {
     Q_OBJECT
@@ -16,6 +16,7 @@ private:
     QTcpServer server;
     QString chat_;
     QList<QTcpSocket*> sockets_;
+    std::unordered_map<QTcpSocket*, QString> names_;
 
     void clientConnected();
     void clientDisconnected();
