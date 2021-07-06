@@ -21,6 +21,7 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+    ClientCommandText.h \
     Server.h \
     mainwindow.h
 
