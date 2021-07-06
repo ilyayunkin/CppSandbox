@@ -69,7 +69,7 @@ void Server::dataReceived()
 
 void Server::updateChat()
 {
-    chatChanged(chat_);
+    emit chatChanged(chat_);
 
     for(auto socket : sockets_)
         socket->write(chat_.toUtf8());
