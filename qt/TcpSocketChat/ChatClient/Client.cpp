@@ -1,6 +1,8 @@
 #include "Client.h"
 
 #include "ClientQuery.h"
+#include "ServerCommandChat.h"
+#include "ServerCommandUserList.h"
 
 #include <QMetaEnum>
 #include <QInputDialog>
@@ -25,6 +27,16 @@ Client::Client(QObject *parent)
             this, &Client::onDataReceived);
 
     socket.connectToHost("localhost", 7050);
+}
+
+void Client::visit(ServerCommandUserList &command)
+{
+    emit userListChanged(command.userList);
+}
+
+void Client::visit(ServerCommandChat &command)
+{
+    emit chatChanged(command.chat);
 }
 
 void Client::sendMessage(QString message)
@@ -63,7 +75,14 @@ void Client::onError(QAbstractSocket::SocketError socketError)
 void Client::onDataReceived()
 {
     qDebug() << "Data received";
-    emit chatChanged(socket.readAll());
+
+    for(const auto &command : parser.parse(socket.readAll())){
+        if(command){
+            command->accept(*this);
+        }else{
+            qDebug() << "Empty command";
+        }
+    }
 }
 
 void Client::onDisconnected()

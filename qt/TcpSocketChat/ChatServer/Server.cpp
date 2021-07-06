@@ -2,6 +2,7 @@
 
 #include "ClientCommandName.h"
 #include "ClientCommandText.h"
+#include "ServerQuery.h"
 
 #include <QMessageBox>
 #include <QDebug>
@@ -52,6 +53,8 @@ void Server::clientDisconnected()
 
     names_.erase(clientSocket);
     clientSocket->deleteLater();
+
+    updateUserList();
 }
 
 void Server::dataReceived()
@@ -73,7 +76,20 @@ void Server::updateChat()
 
     for(auto socket : names_){
         auto clientSocket = socket.first;
-        clientSocket->write(chat_.toUtf8());
+        clientSocket->write(ServerQuery::sendChat(chat_));
+    }
+}
+
+void Server::updateUserList()
+{
+    QStringList userList;
+    for(const auto socket : names_){
+        const auto name = socket.second;
+        userList.append(name);
+    }
+    for(auto socket : names_){
+        auto clientSocket = socket.first;
+        clientSocket->write(ServerQuery::sendUserList(userList));
     }
 }
 
@@ -83,7 +99,9 @@ void Server::visit(ClientCommandName &command)
 
     names_[tmpSocket_] = command.name;
     chat_+= "\r\n" + command.name + " joined the chat!";
+
     updateChat();
+    updateUserList();
 }
 
 void Server::visit(ClientCommandText &command)

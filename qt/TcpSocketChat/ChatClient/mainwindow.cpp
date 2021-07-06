@@ -26,3 +26,8 @@ void MainWindow::setChat(QString chat)
 {
     ui->chatTextEdit->setText(chat);
 }
+
+void MainWindow::setUserList(QStringList setUserList)
+{
+    ui->userListTextEdit->setText(setUserList.join("\r\n"));
+}

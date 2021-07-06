@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Server.cpp \
     ServerParser.cpp \
+    ServerQuery.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -28,6 +29,7 @@ HEADERS += \
     ClientCommandText.h \
     Server.h \
     ServerParser.h \
+    ServerQuery.h \
     mainwindow.h
 
 FORMS += \

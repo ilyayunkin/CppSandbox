@@ -28,6 +28,7 @@ private:
     void clientDisconnected();
     void dataReceived();
     void updateChat();
+    void updateUserList();
 
     // AbstractClientCommandVisitor interface
 public:

@@ -17,6 +17,7 @@ public:
 
 public slots:
     void setChat(QString chat);
+    void setUserList(QStringList setUserList);
 
 signals:
     void newMessage(QString);
