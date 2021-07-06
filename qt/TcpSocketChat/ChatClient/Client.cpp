@@ -1,4 +1,7 @@
 #include "Client.h"
+
+#include "ClientQuery.h"
+
 #include <QMetaEnum>
 #include <QInputDialog>
 #include <QMessageBox>
@@ -26,22 +29,14 @@ Client::Client(QObject *parent)
 
 void Client::sendMessage(QString message)
 {
-    socket.write(QString(
-R"JS({"command":"message",
-"text":"%1"})JS"
-                     )
-                 .arg(message).toUtf8());
+    socket.write(ClientQuery::sendText(message));
 }
 
 void Client::onConnected()
 {
     qDebug() << "Connected";
     auto name = QInputDialog::getText(nullptr, tr("Input your name"), tr("name"));
-    socket.write(QString(
-R"JS({"command":"name",
-"name":"%1"})JS"
-                     )
-                 .arg(name).toUtf8());
+    socket.write(ClientQuery::sendName(name));
 }
 
 void Client::onError(QAbstractSocket::SocketError socketError)

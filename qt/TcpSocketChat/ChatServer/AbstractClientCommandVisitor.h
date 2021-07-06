@@ -5,8 +5,8 @@ class ClientCommandName;
 class ClientCommandText;
 struct AbstractClientCommandVisitor
 {
-    virtual void visit(ClientCommandName&) = 0;
-    virtual void visit(ClientCommandText&) = 0;
+    virtual void visit(ClientCommandName &command) = 0;
+    virtual void visit(ClientCommandText &command) = 0;
 };
 
 #endif // ABSTRACTCLIENTCOMMANDVISITOR_H

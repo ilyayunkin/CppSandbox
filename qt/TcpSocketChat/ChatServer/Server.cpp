@@ -1,9 +1,15 @@
 #include "Server.h"
+
+#include "ClientCommandName.h"
+#include "ClientCommandText.h"
+
 #include <QMessageBox>
 #include <QDebug>
 #include <QTcpSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
+
+#include <assert.h>
 
 Server::Server(QObject *parent)
     : QObject(parent)
@@ -51,48 +57,14 @@ void Server::clientDisconnected()
 void Server::dataReceived()
 {
     qDebug() << "Data received";
-    QTcpSocket *const clientSocket =
-            dynamic_cast<QTcpSocket *>(sender());
+    tmpSocket_ = dynamic_cast<QTcpSocket *>(sender());
 
     assert(QString(sender()->metaObject()->className()) ==
            QString("QTcpSocket"));
-    assert(clientSocket != nullptr);
+    assert(tmpSocket_ != nullptr);
 
-    auto data = clientSocket->readAll();
-    QJsonDocument doc = QJsonDocument::fromJson(data);
-    if(!doc.isObject()){
-        qDebug() << "Not an object:" << data;
-        return;
-    }
-
-    auto obj = doc.object();
-    if(!obj.contains("command")){
-        qDebug() << "No command:" << data;
-        return;
-    }
-
-    auto command = obj.value("command").toString();
-    if(command == "message"){
-        if(!obj.contains("text")){
-            qDebug() << "No text:" << data;
-            return;
-        }
-        auto text = obj.value("text").toString();
-
-        auto clientName = names_[clientSocket];
-        chat_+= "\r\n" + clientName + ":" + text;
-        emit updateChat();
-    }else if(command == "name"){
-        if(!obj.contains("name")){
-            qDebug() << "No name:" << data;
-            return;
-        }
-        auto name = obj.value("name").toString();
-
-        names_[clientSocket] = name;
-        chat_+= "\r\n" + name + " joined the chat!";
-        updateChat();
-    }
+    auto commandPtr = parser_.parse(tmpSocket_->readAll());
+    commandPtr->accept(*this);
 }
 
 void Server::updateChat()
@@ -101,4 +73,22 @@ void Server::updateChat()
 
     for(auto socket : sockets_)
         socket->write(chat_.toUtf8());
+}
+
+void Server::visit(ClientCommandName &command)
+{
+    assert(tmpSocket_);
+
+    names_[tmpSocket_] = command.name;
+    chat_+= "\r\n" + command.name + " joined the chat!";
+    updateChat();
+}
+
+void Server::visit(ClientCommandText &command)
+{
+    assert(tmpSocket_);
+
+    auto clientName = names_[tmpSocket_];
+    chat_+= "\r\n" + clientName + ":" + command.text;
+    emit updateChat();
 }
