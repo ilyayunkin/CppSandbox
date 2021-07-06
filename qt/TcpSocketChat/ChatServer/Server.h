@@ -20,7 +20,6 @@ signals:
 private:
     QTcpServer server;
     QString chat_;
-    QList<QTcpSocket*> sockets_;
     std::unordered_map<QTcpSocket*, QString> names_;
     ServerParser parser_;
     QTcpSocket*tmpSocket_ = nullptr;

@@ -34,7 +34,7 @@ void Server::clientConnected()
                          this, &Server::clientDisconnected);
         connect(clientSocket, &QTcpSocket::readyRead,
                 this, &Server::dataReceived);
-        sockets_.push_back(clientSocket);
+        names_[clientSocket] = QString();
 
         qDebug() << "Client connected";
     }
@@ -50,7 +50,7 @@ void Server::clientDisconnected()
     chat_+= "\r\n" + clientName + " left the chat";
     updateChat();
 
-    sockets_.removeAll(clientSocket);
+    names_.erase(clientSocket);
     clientSocket->deleteLater();
 }
 
@@ -71,8 +71,10 @@ void Server::updateChat()
 {
     emit chatChanged(chat_);
 
-    for(auto socket : sockets_)
-        socket->write(chat_.toUtf8());
+    for(auto socket : names_){
+        auto clientSocket = socket.first;
+        clientSocket->write(chat_.toUtf8());
+    }
 }
 
 void Server::visit(ClientCommandName &command)
