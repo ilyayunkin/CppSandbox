@@ -58,6 +58,11 @@ void Client::onError(QAbstractSocket::SocketError socketError)
     const QString errorText = (value != nullptr) ? value : "Unknown error";
 
     emit error(errorText);
+
+    if(socketError == QAbstractSocket::RemoteHostClosedError){
+        QMessageBox::critical(nullptr, tr("Server disconnected"), tr("Chat will be closed"));
+        QApplication::quit();
+    }
 }
 
 void Client::onDataReceived()
@@ -68,6 +73,4 @@ void Client::onDataReceived()
 
 void Client::onDisconnected()
 {
-//    QMessageBox::critical(nullptr, tr("Server disconnected"), tr("Chat will be closed"));
-//    QApplication::quit();
 }
