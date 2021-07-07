@@ -36,6 +36,33 @@ struct FakeClient final : public AbstractServerCommandVisitor
     }
 };
 
+struct ServerSendingScenario
+{
+    FakeClient fakeClient;
+    ServerSendingScenario(QByteArray frame)
+    {
+        QVERIFY(!frame.isEmpty());
+        ClientParser clientParser;
+        for(const auto &commandPtr : clientParser.parse(frame)){
+            QVERIFY(commandPtr);
+            commandPtr->accept(fakeClient);
+        }
+    }
+};
+
+struct ClientSendingScenario
+{
+    FakeServer fakeServer;
+    ClientSendingScenario(QByteArray frame)
+    {
+        QVERIFY(!frame.isEmpty());
+        ServerParser parser;
+        const ClientCommandPtr commandPtr = parser.parse(frame);
+        QVERIFY(commandPtr);
+        commandPtr->accept(fakeServer);
+    }
+};
+
 class ProtocolTest : public QObject
 {
     Q_OBJECT
@@ -63,30 +90,20 @@ void ProtocolTest::clientSetsName()
 {
     const QString name("My name");
     const QByteArray frame = ClientQuery::sendName(name);
-    QVERIFY(!frame.isEmpty());
 
-    ServerParser parser;
-    const ClientCommandPtr commandPtr = parser.parse(frame);
-    QVERIFY(commandPtr);
-    FakeServer fakeServer;
-    commandPtr->accept(fakeServer);
+    const ClientSendingScenario scenario(frame);
 
-    QCOMPARE(name, fakeServer.name);
+    QCOMPARE(name, scenario.fakeServer.name);
 }
 
 void ProtocolTest::clientSetsText()
 {
     const QString text("Some text");
     const QByteArray frame = ClientQuery::sendText(text);
-    QVERIFY(!frame.isEmpty());
 
-    ServerParser parser;
-    const ClientCommandPtr commandPtr = parser.parse(frame);
-    QVERIFY(commandPtr);
-    FakeServer fakeServer;
-    commandPtr->accept(fakeServer);
+    const ClientSendingScenario scenario(frame);
 
-    QCOMPARE(text, fakeServer.text);
+    QCOMPARE(text, scenario.fakeServer.text);
 }
 
 void ProtocolTest::serverSetsUserList()
@@ -96,34 +113,20 @@ void ProtocolTest::serverSetsUserList()
             << "User2"
                ;
     const QByteArray frame = ServerQuery::sendUserList(userList);
-    QVERIFY(!frame.isEmpty());
 
-    ClientParser clientParser;
-    FakeClient fakeClient;
+    const ServerSendingScenario scenario(frame);
 
-    for(const auto &commandPtr : clientParser.parse(frame)){
-        QVERIFY(commandPtr);
-        commandPtr->accept(fakeClient);
-    }
-
-    QCOMPARE(fakeClient.userList, userList);
+    QCOMPARE(scenario.fakeClient.userList, userList);
 }
 
 void ProtocolTest::serverSetsChat()
 {
     const QString chat = "some text";
     const QByteArray frame = ServerQuery::sendChat(chat);
-    QVERIFY(!frame.isEmpty());
 
-    ClientParser clientParser;
-    FakeClient fakeClient;
+    const ServerSendingScenario scenario(frame);
 
-    for(const auto &commandPtr : clientParser.parse(frame)){
-        QVERIFY(commandPtr);
-        commandPtr->accept(fakeClient);
-    }
-
-    QCOMPARE(fakeClient.chat, chat);
+    QCOMPARE(scenario.fakeClient.chat, chat);
 }
 
 void ProtocolTest::serverSetsChatAndUserList()
@@ -135,18 +138,11 @@ void ProtocolTest::serverSetsChatAndUserList()
                ;
     const QByteArray frame = ServerQuery::sendChat(chat)
             + ServerQuery::sendUserList(userList);
-    QVERIFY(!frame.isEmpty());
 
-    FakeClient fakeClient;
-    ClientParser clientParser;
+    const ServerSendingScenario scenario(frame);
 
-    for(const auto &commandPtr : clientParser.parse(frame)){
-        QVERIFY(commandPtr);
-        commandPtr->accept(fakeClient);
-    }
-
-    QCOMPARE(fakeClient.chat, chat);
-    QCOMPARE(fakeClient.userList, userList);
+    QCOMPARE(scenario.fakeClient.chat, chat);
+    QCOMPARE(scenario.fakeClient.userList, userList);
 }
 
 QTEST_APPLESS_MAIN(ProtocolTest)
