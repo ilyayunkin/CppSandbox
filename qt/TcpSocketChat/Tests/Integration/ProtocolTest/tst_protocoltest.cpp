@@ -44,8 +44,8 @@ struct ServerSendingScenario
         QVERIFY(!frame.isEmpty());
         ClientParser clientParser;
         for(const auto &commandPtr : clientParser.parse(frame)){
-            QVERIFY(commandPtr);
-            commandPtr->accept(fakeClient);
+            if(commandPtr)
+                commandPtr->accept(fakeClient);
         }
     }
 };
@@ -71,9 +71,13 @@ public:
     ~ProtocolTest();
 
 private slots:
+    void clientSetsName_data();
     void clientSetsName();
+    void clientSetsText_data();
     void clientSetsText();
+    void serverSetsUserList_data();
     void serverSetsUserList();
+    void serverSetsChat_data();
     void serverSetsChat();
     void serverSetsChatAndUserList();
     void fragmentallyDeliveredFrames_AreParsed_ByClient();
@@ -87,9 +91,18 @@ ProtocolTest::~ProtocolTest()
 {
 }
 
+void ProtocolTest::clientSetsName_data()
+{
+    QTest::addColumn<QString>("name");
+
+    QTest::newRow("Text") << "My name";
+    QTest::newRow("Quote mark") << "\"";
+    QTest::newRow("Text with colons") << "; к; 2; ;Потребитель1;ЖК ккк п.102, дом 88, кв 3;кв.1;Место1;;Modem1;Modem-type2; ; ;";
+}
+
 void ProtocolTest::clientSetsName()
 {
-    const QString name("My name");
+    QFETCH(QString, name);
     const QByteArray frame = ClientQuery::sendName(name);
 
     const ClientSendingScenario scenario(frame);
@@ -97,9 +110,18 @@ void ProtocolTest::clientSetsName()
     QCOMPARE(name, scenario.fakeServer.name);
 }
 
+void ProtocolTest::clientSetsText_data()
+{
+    QTest::addColumn<QString>("text");
+
+    QTest::newRow("Text") << "Some text";
+    QTest::newRow("Quote mark") << "\"";
+    QTest::newRow("Text with colons") << "; к; 2; ;Потребитель1;ЖК ккк п.102, дом 88, кв 3;кв.1;Место1;;Modem1;Modem-type2; ; ;";
+}
+
 void ProtocolTest::clientSetsText()
 {
-    const QString text("Some text");
+    QFETCH(QString, text);
     const QByteArray frame = ClientQuery::sendText(text);
 
     const ClientSendingScenario scenario(frame);
@@ -107,12 +129,27 @@ void ProtocolTest::clientSetsText()
     QCOMPARE(text, scenario.fakeServer.text);
 }
 
+void ProtocolTest::serverSetsUserList_data()
+{
+    QTest::addColumn<QStringList>("userList");
+
+    QTest::newRow("Text") << (QStringList()
+                          << "User1"
+                          << "User2")
+                             ;
+    QTest::newRow("Quote mark") << (QStringList()
+                                << "User1"
+                                << "\"")
+                                   ;
+    QTest::newRow("Text with colons") << (QStringList()
+                                      << "User1"
+                                      << ";;;;;;")
+                                         ;
+}
+
 void ProtocolTest::serverSetsUserList()
 {
-    const QStringList userList = QStringList()
-            << "User1"
-            << "User2"
-               ;
+    QFETCH(QStringList, userList);
     const QByteArray frame = ServerQuery::sendUserList(userList);
 
     const ServerSendingScenario scenario(frame);
@@ -120,9 +157,18 @@ void ProtocolTest::serverSetsUserList()
     QCOMPARE(scenario.fakeClient.userList, userList);
 }
 
+void ProtocolTest::serverSetsChat_data()
+{
+    QTest::addColumn<QString>("chat");
+
+    QTest::newRow("Text") << "Some text";
+    QTest::newRow("Quote mark") << "\"";
+    QTest::newRow("Text with colons") << "; к; 2; ;Потребитель1;ЖК ккк п.102, дом 88, кв 3;кв.1;Место1;;Modem1;Modem-type2; ; ;";
+}
+
 void ProtocolTest::serverSetsChat()
 {
-    const QString chat = "some text";
+    QFETCH(QString, chat);
     const QByteArray frame = ServerQuery::sendChat(chat);
 
     const ServerSendingScenario scenario(frame);

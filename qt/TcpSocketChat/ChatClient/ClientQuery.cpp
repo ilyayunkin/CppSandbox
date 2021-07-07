@@ -1,21 +1,28 @@
 #include "ClientQuery.h"
+
 #include <QByteArray>
 #include <QString>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 QByteArray ClientQuery::sendName(QString name)
 {
-    return QString(
-R"JS({"command":"name",
-"name":"%1"})JS"
-                )
-            .arg(name).toUtf8();
+    QJsonDocument doc{
+        QJsonObject{
+            {"command", "name"},
+            {"name", name}
+        }
+    };
+    return doc.toJson();
 }
 
 QByteArray ClientQuery::sendText(QString text)
 {
-    return QString(
-R"JS({"command":"message",
-"text":"%1"})JS"
-                     )
-                 .arg(text).toUtf8();
+    QJsonDocument doc{
+        QJsonObject{
+            {"command", "message"},
+            {"text", text}
+        }
+    };
+    return doc.toJson();
 }

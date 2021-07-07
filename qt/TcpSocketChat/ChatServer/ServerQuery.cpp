@@ -2,34 +2,32 @@
 
 #include <QByteArray>
 #include <QStringList>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 QByteArray ServerQuery::sendUserList(const QStringList userList)
 {
-    auto serialize = [&]{
-        QString jsonArray;
-        auto i = 0;
-        for(const auto user : userList){
-            if(i){
-                jsonArray+= ",";
-            }
-            jsonArray+= "\"" + user + "\"";
-            ++i;
+    QJsonArray jsonArray;
+    std::copy(userList.cbegin(), userList.cend(), std::back_inserter(jsonArray));
+
+    QJsonDocument doc{
+        QJsonObject{
+            {"command", "user_list"},
+            {"user_list", jsonArray}
         }
-        return jsonArray;
     };
-    return QString(
-R"JS({"command":"user_list",
-"user_list":[%1]})JS"
-                )
-            .arg(serialize()).toUtf8();
+    return doc.toJson();
+
 }
 
 QByteArray ServerQuery::sendChat(const QString chat)
 {
-    return QString(
-R"JS({"command":"chat",
-"chat":"%1"})JS"
-                )
-            .arg(chat).toUtf8();
-
+    QJsonDocument doc{
+        QJsonObject{
+            {"command", "chat"},
+            {"chat", chat}
+        }
+    };
+    return doc.toJson();
 }
