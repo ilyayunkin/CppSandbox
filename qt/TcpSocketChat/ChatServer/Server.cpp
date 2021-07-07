@@ -47,7 +47,7 @@ void Server::clientDisconnected()
     QTcpSocket *const clientSocket =
             dynamic_cast<QTcpSocket *>(sender());
 
-    auto clientName = names_[clientSocket];
+    const auto clientName = names_[clientSocket];
     chat_+= "\r\n" + clientName + " left the chat";
     updateChat();
 
@@ -66,7 +66,7 @@ void Server::dataReceived()
            QString("QTcpSocket"));
     assert(tmpSocket_ != nullptr);
 
-    auto commandPtr = parser_.parse(tmpSocket_->readAll());
+    const auto commandPtr = parser_.parse(tmpSocket_->readAll());
     commandPtr->accept(*this);
 }
 
@@ -74,8 +74,8 @@ void Server::updateChat()
 {
     emit chatChanged(chat_);
 
-    for(auto socket : names_){
-        auto clientSocket = socket.first;
+    for(const auto socket : names_){
+        const auto clientSocket = socket.first;
         clientSocket->write(ServerQuery::sendChat(chat_));
     }
 }
@@ -87,8 +87,8 @@ void Server::updateUserList()
         const auto name = socket.second;
         userList.append(name);
     }
-    for(auto socket : names_){
-        auto clientSocket = socket.first;
+    for(const auto socket : names_){
+        const auto clientSocket = socket.first;
         clientSocket->write(ServerQuery::sendUserList(userList));
     }
 }
@@ -108,7 +108,7 @@ void Server::visit(const ClientCommandText &command)
 {
     assert(tmpSocket_);
 
-    auto clientName = names_[tmpSocket_];
+    const auto clientName = names_[tmpSocket_];
     chat_+= "\r\n" + clientName + ":" + command.text;
     emit updateChat();
 }

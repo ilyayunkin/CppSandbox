@@ -60,7 +60,7 @@ ServerCommandPtr ClientParser::parseOneObject(const QByteArray data)
             qDebug() << "No chat:" << data;
             return ServerCommandPtr();
         }
-        auto chat = obj.value("chat").toString();
+        const auto chat = obj.value("chat").toString();
 
         return std::make_unique<ServerCommandChat>(chat);
      }

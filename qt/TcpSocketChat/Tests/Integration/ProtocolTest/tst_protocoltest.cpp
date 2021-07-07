@@ -62,11 +62,11 @@ ProtocolTest::~ProtocolTest()
 void ProtocolTest::clientSetsName()
 {
     const QString name("My name");
-    QByteArray frame = ClientQuery::sendName(name);
+    const QByteArray frame = ClientQuery::sendName(name);
     QVERIFY(!frame.isEmpty());
 
     ServerParser parser;
-    ClientCommandPtr commandPtr = parser.parse(frame);
+    const ClientCommandPtr commandPtr = parser.parse(frame);
     QVERIFY(commandPtr);
     FakeServer fakeServer;
     commandPtr->accept(fakeServer);
@@ -77,11 +77,11 @@ void ProtocolTest::clientSetsName()
 void ProtocolTest::clientSetsText()
 {
     const QString text("Some text");
-    QByteArray frame = ClientQuery::sendText(text);
+    const QByteArray frame = ClientQuery::sendText(text);
     QVERIFY(!frame.isEmpty());
 
     ServerParser parser;
-    ClientCommandPtr commandPtr = parser.parse(frame);
+    const ClientCommandPtr commandPtr = parser.parse(frame);
     QVERIFY(commandPtr);
     FakeServer fakeServer;
     commandPtr->accept(fakeServer);

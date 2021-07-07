@@ -47,7 +47,7 @@ void Client::sendMessage(QString message)
 void Client::onConnected()
 {
     qDebug() << "Connected";
-    auto name = QInputDialog::getText(nullptr, tr("Input your name"), tr("name"));
+    const auto name = QInputDialog::getText(nullptr, tr("Input your name"), tr("name"));
     socket.write(ClientQuery::sendName(name));
 }
 
