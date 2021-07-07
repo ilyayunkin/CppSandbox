@@ -2,32 +2,10 @@
 
 #include "Utilities/JsonUtilities.h"
 
-class JsonUtilitiesTest : public QObject
+namespace  {
+auto getJsonList()
 {
-    Q_OBJECT
-
-public:
-    JsonUtilitiesTest();
-    ~JsonUtilitiesTest();
-
-private slots:
-    void splitting();
-
-};
-
-JsonUtilitiesTest::JsonUtilitiesTest()
-{
-
-}
-
-JsonUtilitiesTest::~JsonUtilitiesTest()
-{
-
-}
-
-void JsonUtilitiesTest::splitting()
-{
-    const auto list = QByteArrayList()
+    return QByteArrayList()
             << R"({
                "firstName": "Иван",
                "lastName": "Иванов",
@@ -65,7 +43,45 @@ void JsonUtilitiesTest::splitting()
                "children": [],
                "spouse": null
              })";
-    const auto  outList = JsonUtilities::split(list.join());
+}
+}
+class JsonUtilitiesTest : public QObject
+{
+    Q_OBJECT
+
+public:
+    JsonUtilitiesTest();
+    ~JsonUtilitiesTest();
+
+private slots:
+    void splitting();
+
+};
+
+JsonUtilitiesTest::JsonUtilitiesTest()
+{
+
+}
+
+JsonUtilitiesTest::~JsonUtilitiesTest()
+{
+
+}
+
+void JsonUtilitiesTest::splitting()
+{
+    const auto list = getJsonList();
+    const auto frame = list.join();
+    const auto fragments = QByteArrayList()
+            << list.mid(0, 5)
+            << list.mid(5);
+
+    QByteArrayList outList;
+
+    JsonUtilities::JsonDefragmentator jsonDefragmentator;
+    for(const auto &fragment : fragments){
+        outList+= jsonDefragmentator.process(fragment);
+    }
 
     QCOMPARE(outList, list);
 }

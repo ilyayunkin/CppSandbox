@@ -23,3 +23,23 @@ QByteArrayList JsonUtilities::split(const QByteArray data)
     }
     return frames;
 }
+
+QByteArrayList JsonUtilities::JsonDefragmentator::process(const QByteArray data)
+{
+    QByteArrayList frames;
+    for(const auto c : data){
+        switch (c) {
+        case '{' : ++braceCnt_;
+            break;
+        case '}' : --braceCnt_;
+            break;
+        }
+        tmpObject_.append(c);
+
+        if(braceCnt_ == 0 && !tmpObject_.isEmpty()){
+            frames << tmpObject_;
+            tmpObject_.clear();
+        }
+    }
+    return frames;
+}

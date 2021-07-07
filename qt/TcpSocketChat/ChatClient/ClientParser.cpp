@@ -13,7 +13,7 @@
 ServerCommandPtrList ClientParser::parse(const QByteArray data)
 {
     ServerCommandPtrList ret;
-    const auto frames = JsonUtilities::split(data);
+    const auto frames = jsonDefragmentator_.process(data);
 
     for(const auto frame : frames){
         ret.push_back(parseOneObject(frame));
