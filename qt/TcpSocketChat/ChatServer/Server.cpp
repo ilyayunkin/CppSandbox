@@ -93,7 +93,7 @@ void Server::updateUserList()
     }
 }
 
-void Server::visit(ClientCommandName &command)
+void Server::visit(const ClientCommandName &command)
 {
     assert(tmpSocket_);
 
@@ -104,7 +104,7 @@ void Server::visit(ClientCommandName &command)
     updateUserList();
 }
 
-void Server::visit(ClientCommandText &command)
+void Server::visit(const ClientCommandText &command)
 {
     assert(tmpSocket_);
 

@@ -7,7 +7,7 @@
 class AbstractServerCommandVisitor;
 struct AbstractServerCommand
 {
-    virtual void accept(AbstractServerCommandVisitor &visitor) = 0;
+    virtual void accept(AbstractServerCommandVisitor &visitor) const = 0;
     virtual ~AbstractServerCommand(){}
 };
 using ServerCommandPtr = std::unique_ptr<AbstractServerCommand>;

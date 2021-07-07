@@ -7,12 +7,12 @@
 
 #include <QString>
 
-struct ServerCommandChat : public AbstractServerCommand
+struct ServerCommandChat final : public AbstractServerCommand
 {
-    QString chat;
+    const QString chat;
     explicit ServerCommandChat(QString chat) : chat(chat)
     {}
-    void accept(AbstractServerCommandVisitor &visitor){
+    void accept(AbstractServerCommandVisitor &visitor) const override{
         visitor.visit(*this);
     }
 };

@@ -5,8 +5,8 @@ class ServerCommandUserList;
 class ServerCommandChat;
 struct AbstractServerCommandVisitor
 {
-    virtual void visit(ServerCommandUserList &command) = 0;
-    virtual void visit(ServerCommandChat &command) = 0;
+    virtual void visit(const ServerCommandUserList &command) = 0;
+    virtual void visit(const ServerCommandChat &command) = 0;
 };
 
 #endif // ABSTRACTSERVERCOMMANDVISITOR_H

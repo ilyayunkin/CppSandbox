@@ -6,7 +6,7 @@
 class AbstractClientCommandVisitor;
 struct AbstractClientCommand
 {
-    virtual void accept(AbstractClientCommandVisitor &) = 0;
+    virtual void accept(AbstractClientCommandVisitor &) const = 0;
     virtual ~AbstractClientCommand(){}
 };
 

@@ -29,12 +29,12 @@ Client::Client(QObject *parent)
     socket.connectToHost("localhost", 7050);
 }
 
-void Client::visit(ServerCommandUserList &command)
+void Client::visit(const ServerCommandUserList &command)
 {
     emit userListChanged(command.userList);
 }
 
-void Client::visit(ServerCommandChat &command)
+void Client::visit(const ServerCommandChat &command)
 {
     emit chatChanged(command.chat);
 }

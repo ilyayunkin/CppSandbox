@@ -5,14 +5,14 @@
 #include "AbstractServerCommandVisitor.h"
 #include <QStringList>
 
-struct ServerCommandUserList : public AbstractServerCommand
+struct ServerCommandUserList final : public AbstractServerCommand
 {
-    QStringList userList;
+    const QStringList userList;
     explicit ServerCommandUserList(const QStringList userList)
         : userList(userList)
     {}
 
-    void accept(AbstractServerCommandVisitor &visitor)
+    void accept(AbstractServerCommandVisitor &visitor) const override
     {
         visitor.visit(*this);
     }

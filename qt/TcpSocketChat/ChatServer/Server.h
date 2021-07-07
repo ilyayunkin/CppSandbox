@@ -9,7 +9,7 @@
 #include <QList>
 #include <unordered_map>
 
-class Server : public QObject, public AbstractClientCommandVisitor
+class Server final : public QObject, public AbstractClientCommandVisitor
 {
     Q_OBJECT
 public:
@@ -32,8 +32,8 @@ private:
 
     // AbstractClientCommandVisitor interface
 public:
-    void visit(ClientCommandName &command);
-    void visit(ClientCommandText &command);
+    void visit(const ClientCommandName &command) override;
+    void visit(const ClientCommandText &command) override;
 };
 
 #endif // SERVER_H

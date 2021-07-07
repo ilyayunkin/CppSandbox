@@ -16,10 +16,10 @@ struct FakeServer final : public AbstractClientCommandVisitor
 {
     QString name;
     QString text;
-    void visit(ClientCommandName &c){
+    void visit(const ClientCommandName &c){
         name = c.name;
     }
-    void visit(ClientCommandText &c){
+    void visit(const ClientCommandText &c){
         text = c.text;
     }
 };
@@ -28,10 +28,10 @@ struct FakeClient final : public AbstractServerCommandVisitor
 {
     QStringList userList;
     QString chat;
-    void visit(ServerCommandUserList &command){
+    void visit(const ServerCommandUserList &command){
         userList = command.userList;
     }
-    void visit(ServerCommandChat &command){
+    void visit(const ServerCommandChat &command){
         chat = command.chat;
     }
 };

@@ -6,11 +6,11 @@
 
 #include <QString>
 
-struct ClientCommandText : public AbstractClientCommand
+struct ClientCommandText final : public AbstractClientCommand
 {
-    QString text;
+    const QString text;
     explicit ClientCommandText(QString text) : text(text){};
-    void accept(AbstractClientCommandVisitor &v){
+    void accept(AbstractClientCommandVisitor &v) const override{
         v.visit(*this);
     }
 };

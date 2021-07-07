@@ -8,7 +8,7 @@
 
 #include <QTcpSocket>
 
-class Client : public QObject, public AbstractServerCommandVisitor
+class Client final : public QObject, public AbstractServerCommandVisitor
 {
     Q_OBJECT
 public:
@@ -16,8 +16,8 @@ public:
 
     // AbstractServerCommandVisitor interface
 public:
-    void visit(ServerCommandUserList &command);
-    void visit(ServerCommandChat &command);
+    void visit(const ServerCommandUserList &command) override;
+    void visit(const ServerCommandChat &command) override;
 
 public slots:
     void sendMessage(QString message);
