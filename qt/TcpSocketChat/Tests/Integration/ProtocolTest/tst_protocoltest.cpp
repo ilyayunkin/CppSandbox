@@ -76,6 +76,7 @@ private slots:
     void serverSetsUserList();
     void serverSetsChat();
     void serverSetsChatAndUserList();
+    void fragmentallyDeliveredFrames_AreParsed_ByClient();
 };
 
 ProtocolTest::ProtocolTest()
@@ -143,6 +144,36 @@ void ProtocolTest::serverSetsChatAndUserList()
 
     QCOMPARE(scenario.fakeClient.chat, chat);
     QCOMPARE(scenario.fakeClient.userList, userList);
+}
+
+void ProtocolTest::fragmentallyDeliveredFrames_AreParsed_ByClient()
+{
+    const QString chat = "some text";
+    const QStringList userList = QStringList()
+            << "User1"
+            << "User2"
+               ;
+    const QByteArray frame = ServerQuery::sendChat(chat)
+            + ServerQuery::sendUserList(userList);
+    FakeClient fakeClient;
+    {
+        QVERIFY(!frame.isEmpty());
+        ClientParser clientParser;
+        auto const frameLen = frame.length();
+        const QByteArrayList fragments = QByteArrayList()
+                << frame.mid(0, frameLen - 5)
+                << frame.mid(frameLen - 5);
+
+        for(const auto fragment : fragments){
+            for(const auto &commandPtr : clientParser.parse(fragment)){
+                if(commandPtr)
+                    commandPtr->accept(fakeClient);
+            }
+        }
+    }
+
+    QCOMPARE(fakeClient.chat, chat);
+    QCOMPARE(fakeClient.userList, userList);
 }
 
 QTEST_APPLESS_MAIN(ProtocolTest)
