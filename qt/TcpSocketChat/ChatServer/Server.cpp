@@ -11,6 +11,7 @@
 #include <QJsonObject>
 
 #include <assert.h>
+#include <algorithm>
 
 Server::Server(QObject *parent)
     : QObject(parent)
@@ -83,10 +84,9 @@ void Server::updateChat()
 void Server::updateUserList()
 {
     QStringList userList;
-    for(const auto socket : names_){
-        const auto name = socket.second;
-        userList.append(name);
-    }
+    std::transform(names_.cbegin(), names_.cend(), std::back_inserter(userList),
+                   [](const auto socketPair){return socketPair.second;});
+
     for(const auto socket : names_){
         const auto clientSocket = socket.first;
         clientSocket->write(ServerQuery::sendUserList(userList));

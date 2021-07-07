@@ -10,14 +10,15 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <algorithm>
+
 ServerCommandPtrList ClientParser::parse(const QByteArray data)
 {
     ServerCommandPtrList ret;
     const auto frames = jsonDefragmentator_.process(data);
 
-    for(const auto frame : frames){
-        ret.push_back(parseOneObject(frame));
-    }
+    std::transform(frames.cbegin(), frames.cend(), std::back_inserter(ret),
+                   [this](const auto frame){return parseOneObject(frame);});
 
     return ret;
 }
@@ -51,9 +52,9 @@ ServerCommandPtr ClientParser::parseOneObject(const QByteArray data)
 
         const auto jsonArray = jsonValue.toArray();
         QStringList list;
-        for(auto const item : jsonArray){
-            list << item.toString();
-        }
+        std::transform(jsonArray.cbegin(), jsonArray.cend(), std::back_inserter(list),
+                       [](const auto item){return item.toString();});
+
         return std::make_unique<ServerCommandUserList>(list);
     }else if(command == "chat"){
         if(!obj.contains("chat")){
