@@ -18,7 +18,6 @@ QByteArray ServerQuery::sendUserList(const QStringList userList)
         }
     };
     return doc.toJson();
-
 }
 
 QByteArray ServerQuery::sendChat(const QString chat)
