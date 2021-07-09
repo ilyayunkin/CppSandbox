@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
+import ru.ilya.helloworld 1.0 // Подключаем свой C++ класс, наследующий QObject, зарегистрированный в функции main() из main.cpp
 
 Window {
     visible: true
@@ -8,6 +9,10 @@ Window {
     minimumWidth: 640
     minimumHeight: 480
     title: qsTr("Hello World")
+
+    Data{// Наш C++ класс
+        id: cppData
+    }
 
     TextField{
         id: rightBottomRect
@@ -22,6 +27,8 @@ Window {
         y: 0
         width: parent.width / 2
         height: parent.height / 2
+
+        text: cppData.number // Печатаем  свойство из нашего C++ класса
     }
     Rectangle{
         id: topLeftText
