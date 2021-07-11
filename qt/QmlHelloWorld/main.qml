@@ -20,6 +20,8 @@ Window {
         y: parent.height / 2
         width: parent.width / 2
         height: parent.height / 2
+
+        rotation: 45
     }
     TextField {       
         id: rightTopRect
@@ -29,6 +31,8 @@ Window {
         height: parent.height / 2
 
         text: cppData.number // Печатаем  свойство из нашего C++ класса
+
+        opacity: 0.5 // Полупрозрачность (от 0 до 1)
     }
     Rectangle{
         id: topLeftText
