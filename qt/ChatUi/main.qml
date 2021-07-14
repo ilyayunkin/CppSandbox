@@ -40,6 +40,9 @@ Window{
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                         anchors.margins: 5
                         background: Rectangle {anchors.fill: parent; radius: 20; color: parent.enabled ? "white" : "grey"}
+                        onTextChanged: {
+                            chat.cursorPosition = chat.text.length
+                        }
                     }
                 }
                 ScrollView{
