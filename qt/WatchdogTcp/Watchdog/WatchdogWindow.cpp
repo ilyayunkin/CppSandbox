@@ -7,6 +7,8 @@ WatchdogWindow::WatchdogWindow(int port, QWidget *parent)
     , watchdog_("Client.exe", port)
 {
     ui->setupUi(this);
+    connect(&watchdog_, &Watchdog::readyRead, this,
+            [this]{ui->textBrowser->setText(watchdog_.readAll());});
 }
 
 WatchdogWindow::~WatchdogWindow()

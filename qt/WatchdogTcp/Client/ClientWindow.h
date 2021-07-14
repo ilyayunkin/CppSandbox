@@ -20,6 +20,9 @@ signals:
     void disconnected();
     void dataReceived();
 
+private slots:
+    void on_sendButton_clicked();
+
 private:
     Ui::ClientWindow *ui;
     QTcpSocket socket_;

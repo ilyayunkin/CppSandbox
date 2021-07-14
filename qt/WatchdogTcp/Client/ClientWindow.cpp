@@ -44,3 +44,8 @@ void ClientWindow::onError(QAbstractSocket::SocketError socketError)
 //    emit error(ret);
 }
 
+
+void ClientWindow::on_sendButton_clicked()
+{
+    socket_.write(ui->textEdit->toPlainText().toUtf8());
+}

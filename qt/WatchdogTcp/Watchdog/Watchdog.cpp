@@ -4,6 +4,8 @@
 #include <QTcpSocket>
 #include <QProcess>
 
+#include <cassert>
+
 Watchdog::Watchdog(const QString filename, const int port, QObject *parent)
     : QObject(parent)
     , filename_(filename)
@@ -15,7 +17,7 @@ Watchdog::Watchdog(const QString filename, const int port, QObject *parent)
                     "Unable to open connection");
     }else{
         connect(&server_, &QTcpServer::newConnection,
-                this, &Watchdog::clientConnected);
+                this, &Watchdog::onClientConnected_);
     }
 
     restartClient_();
@@ -24,53 +26,81 @@ Watchdog::Watchdog(const QString filename, const int port, QObject *parent)
 Watchdog::~Watchdog()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    disconnect(connection_);
+    if(clientSocket_)
+        clientSocket_->disconnect();
 }
 
-void Watchdog::clientConnected()
+QByteArray Watchdog::readAll()
 {
-    QTcpSocket *const clientSocket =
-            server_.nextPendingConnection();
-    if(clientSocket != nullptr)
-    {
-        connection_ = connect(clientSocket, &QTcpSocket::disconnected,
-                         this, &Watchdog::clientDisconnected);
-        connect(clientSocket, &QTcpSocket::readyRead,
-                this, &Watchdog::dataReceived);
-//        names_[clientSocket] = QString();
+    if(clientSocket_){
+        return clientSocket_->readAll();
+    }
 
-        qDebug() << "Client connected";
+    return QByteArray();
+}
+
+void Watchdog::write(const QByteArray data)
+{
+    if(clientSocket_){
+        clientSocket_->write(data);
     }
 }
 
-void Watchdog::clientDisconnected()
+void Watchdog::onClientConnected_()
 {
-    qDebug() << "Client disconnected";
+    clientSocket_ = server_.nextPendingConnection();
+
+    if(clientSocket_ != nullptr)
+    {
+        connect(clientSocket_, &QTcpSocket::disconnected,
+                this, &Watchdog::onClientDisconnected_);
+        connect(clientSocket_, &QTcpSocket::readyRead,
+                this, &Watchdog::onDataReceived_);
+
+        connect(clientSocket_, &QTcpSocket::disconnected,
+                this, &Watchdog::disconnected);
+        connect(clientSocket_, &QTcpSocket::readyRead,
+                this, &Watchdog::readyRead);
+        //        names_[clientSocket] = QString();
+
+        qDebug() << "Client connected";
+        emit connected();
+    }
+}
+
+void Watchdog::onClientDisconnected_()
+{
     QTcpSocket *const clientSocket =
             dynamic_cast<QTcpSocket *>(sender());
 
+    assert(clientSocket == clientSocket_);
+
     restartClient_();
 
-//    const auto clientName = names_[clientSocket];
-//    chat_+= "\r\n" + clientName + " left the chat";
-//    updateChat();
+    //    const auto clientName = names_[clientSocket];
+    //    chat_+= "\r\n" + clientName + " left the chat";
+    //    updateChat();
 
-//    names_.erase(clientSocket);
+    //    names_.erase(clientSocket);
     clientSocket->deleteLater();
 
-//    updateUserList();
+    //    updateUserList();
 }
 
-void Watchdog::dataReceived()
+void Watchdog::onDataReceived_()
 {
     qDebug() << "Data received";
-//    tmpSocket_ = dynamic_cast<QTcpSocket *>(sender());
+    QTcpSocket *const clientSocket =
+            dynamic_cast<QTcpSocket *>(sender());
 
-//    assert(QString(sender()->metaObject()->className()) ==
-//           QString("QTcpSocket"));
-//    assert(tmpSocket_ != nullptr);
+    assert(clientSocket == clientSocket_);
+    //    tmpSocket_ = dynamic_cast<QTcpSocket *>(sender());
 
-//    const auto commandPtr = parser_.parse(tmpSocket_->readAll());
+    //    assert(QString(sender()->metaObject()->className()) ==
+    //           QString("QTcpSocket"));
+    //    assert(tmpSocket_ != nullptr);
+
+    //    const auto commandPtr = parser_.parse(tmpSocket_->readAll());
     //    commandPtr->accept(*this);
 }
 
