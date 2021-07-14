@@ -1,20 +1,24 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
+#include <QApplication>
+#include <QQmlEngine>
+#include <QQuickItem>
+#include <QDebug>
+#include <QLineEdit>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
+    QLineEdit le;
+    le.show();
 
-    QQmlApplicationEngine engine;
-    const QUrl url(QStringLiteral("qrc:/main.qml"));
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-                     &app, [url](QObject *obj, const QUrl &objUrl) {
-        if (!obj && url == objUrl)
-            QCoreApplication::exit(-1);
-    }, Qt::QueuedConnection);
-    engine.load(url);
+    QQmlEngine engine;
+    QQmlComponent component(&engine,
+            QUrl(QStringLiteral("qrc:/main.qml")));
+    QObject *ui = component.create();
+
+    QObject::connect(ui, SIGNAL(sendMessage(QString)),
+                     &le, SLOT(setText(QString)));
 
     return app.exec();
 }
