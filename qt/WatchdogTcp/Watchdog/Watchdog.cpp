@@ -21,13 +21,19 @@ Watchdog::Watchdog(const QString filename, const int port, QObject *parent)
     restartClient_();
 }
 
+Watchdog::~Watchdog()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    disconnect(connection_);
+}
+
 void Watchdog::clientConnected()
 {
     QTcpSocket *const clientSocket =
             server_.nextPendingConnection();
     if(clientSocket != nullptr)
     {
-        QObject::connect(clientSocket, &QTcpSocket::disconnected,
+        connection_ = connect(clientSocket, &QTcpSocket::disconnected,
                          this, &Watchdog::clientDisconnected);
         connect(clientSocket, &QTcpSocket::readyRead,
                 this, &Watchdog::dataReceived);
