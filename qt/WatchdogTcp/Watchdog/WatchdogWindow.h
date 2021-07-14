@@ -2,7 +2,7 @@
 #define WATCHDOGWINDOW_H
 
 #include <QMainWindow>
-#include <QTcpServer>
+#include <Watchdog.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class WatchdogWindow; }
@@ -18,10 +18,6 @@ public:
 
 private:
     Ui::WatchdogWindow *ui;
-    QTcpServer server_;
-    void clientConnected();
-    void clientDisconnected();
-    void dataReceived();
-    void restartClient_();
+    Watchdog watchdog_;
 };
 #endif // WATCHDOGWINDOW_H
