@@ -27,5 +27,6 @@ private:
     Ui::ClientWindow *ui;
     QTcpSocket socket_;
     void onError(QAbstractSocket::SocketError socketError);
+    void onDisconnected();
 };
 #endif // CLIENTWINDOW_H

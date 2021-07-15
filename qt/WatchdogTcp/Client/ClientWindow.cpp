@@ -2,6 +2,7 @@
 #include "ui_ClientWindow.h"
 
 #include <QMetaEnum>
+#include <QApplication>
 
 ClientWindow::ClientWindow(const QString hostName, const int port, QWidget *parent)
     : QMainWindow(parent)
@@ -17,11 +18,15 @@ ClientWindow::ClientWindow(const QString hostName, const int port, QWidget *pare
     connect(&socket_, &QTcpSocket::readyRead,
             this, &ClientWindow::dataReceived);
 
+    connect(&socket_, &QTcpSocket::disconnected,
+            this, &ClientWindow::onDisconnected);
+
     socket_.connectToHost(hostName, port);
 }
 
 ClientWindow::~ClientWindow()
 {
+    socket_.disconnect();
     delete ui;
 }
 
@@ -41,7 +46,12 @@ void ClientWindow::onError(QAbstractSocket::SocketError socketError)
 //            ? ConnectionError::RemoteHostClosedError
 //            : ConnectionError::Unknown;
 
-//    emit error(ret);
+    //    emit error(ret);
+}
+
+void ClientWindow::onDisconnected()
+{
+    QApplication::quit();
 }
 
 
