@@ -94,6 +94,7 @@ void Watchdog::onDataReceived_()
             dynamic_cast<QTcpSocket *>(sender());
 
     assert(clientSocket == clientSocket_);
+    qDebug() << "Bytes available:" << clientSocket->bytesAvailable();
     //    tmpSocket_ = dynamic_cast<QTcpSocket *>(sender());
 
     //    assert(QString(sender()->metaObject()->className()) ==
