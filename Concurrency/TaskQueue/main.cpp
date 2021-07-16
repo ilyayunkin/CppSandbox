@@ -8,6 +8,7 @@
 #include <functional>
 #include <queue>
 #include <cassert>
+#include <chrono>
 
 using Task = std::function<void()>;
 
@@ -27,8 +28,12 @@ int main(int argc, char *argv[])
     auto pusher1 = [&]{
         for(int i = 0; i < 10; ++i){
             {
-                std::lock_guard lock(mutex);
-                tasks.push([]{qDebug() << __PRETTY_FUNCTION__ << __LINE__;});
+                {
+                    std::lock_guard lock(mutex);
+                    tasks.push([]{qDebug() << __PRETTY_FUNCTION__ << __LINE__;});
+                }
+                using namespace std::literals::chrono_literals;
+                std::this_thread::sleep_for(1.0ms);
             }
             condVar.notify_one();
         }
@@ -37,8 +42,12 @@ int main(int argc, char *argv[])
     auto pusher2 = [&]{
         for(int i = 0; i < 10; ++i){
             {
-                std::lock_guard lock(mutex);
-                tasks.push([]{qDebug() << __PRETTY_FUNCTION__ << __LINE__;});
+                {
+                    std::lock_guard lock(mutex);
+                    tasks.push([]{qDebug() << __PRETTY_FUNCTION__ << __LINE__;});
+                }
+                using namespace std::literals::chrono_literals;
+                std::this_thread::sleep_for(1.0ms);
             }
             condVar.notify_one();
         }
