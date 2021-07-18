@@ -12,6 +12,7 @@
 
 #include <assert.h>
 #include <algorithm>
+#include <functional>
 
 Server::Server(QObject *parent)
     : QObject(parent)
@@ -42,11 +43,10 @@ void Server::clientConnected()
     }
 }
 
-void Server::clientDisconnected()
+void Server::clientDisconnected(QTcpSocket * const clientSocket)
 {
     qDebug() << "Client disconnected";
-    QTcpSocket *const clientSocket =
-            dynamic_cast<QTcpSocket *>(sender());
+    assert(clientSocket);
 
     const auto clientName = names_[clientSocket];
     chat_+= "\r\n" + clientName + " left the chat";
@@ -58,13 +58,12 @@ void Server::clientDisconnected()
     updateUserList();
 }
 
-void Server::dataReceived()
+void Server::dataReceived(QTcpSocket * const clientSocket)
 {
     qDebug() << "Data received";
-    tmpSocket_ = dynamic_cast<QTcpSocket *>(sender());
+    assert(clientSocket);
 
-    assert(QString(sender()->metaObject()->className()) ==
-           QString("QTcpSocket"));
+    tmpSocket_ = clientSocket;
     assert(tmpSocket_ != nullptr);
 
     const auto commandPtr = parser_.parse(tmpSocket_->readAll());

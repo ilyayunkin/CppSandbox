@@ -25,8 +25,8 @@ private:
     QTcpSocket*tmpSocket_ = nullptr;
 
     void clientConnected();
-    void clientDisconnected();
-    void dataReceived();
+    void clientDisconnected(QTcpSocket *const clientSocket);
+    void dataReceived(QTcpSocket *const clientSocket);
     void updateChat();
     void updateUserList();
 
