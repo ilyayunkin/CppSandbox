@@ -1,6 +1,6 @@
-QT -= gui
+include(../boost.pri)
 
-INCLUDEPATH+=../../../boost_1_76_0/boost_1_76_0
+QT -= gui
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
