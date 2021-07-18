@@ -1,4 +1,5 @@
 include(../boost.pri)
+include(../boost_thread.pri)
 
 QT -= gui
 
@@ -18,9 +19,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp
-
-LIBS += -L"F:/Project/boost_1_76_0/boost_1_76_0/lib/boost/bin.v2/libs/thread/build/gcc-7.3.0/release/link-static/threadapi-win32/threading-multi/visibility-hidden/"
-LIBS += -lboost_thread-mgw7-mt-x32-1_76
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
