@@ -67,7 +67,8 @@ void Server::dataReceived(QTcpSocket * const clientSocket)
     assert(tmpSocket_ != nullptr);
 
     const auto commandPtr = parser_.parse(tmpSocket_->readAll());
-    commandPtr->accept(*this);
+    if(commandPtr)
+        commandPtr->accept(*this);
 }
 
 void Server::updateChat()
