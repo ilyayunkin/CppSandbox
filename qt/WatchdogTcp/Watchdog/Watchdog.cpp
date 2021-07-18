@@ -5,6 +5,7 @@
 #include <QProcess>
 
 #include <cassert>
+#include <functional>
 
 Watchdog::Watchdog(const QString filename, const int port, QObject *parent)
     : QObject(parent)
@@ -53,9 +54,9 @@ void Watchdog::onClientConnected_()
     if(clientSocket_ != nullptr)
     {
         connect(clientSocket_, &QTcpSocket::disconnected,
-                this, &Watchdog::onClientDisconnected_);
+                std::bind(&Watchdog::onClientDisconnected_, this, clientSocket_));
         connect(clientSocket_, &QTcpSocket::readyRead,
-                this, &Watchdog::onDataReceived_);
+                std::bind(&Watchdog::onDataReceived_, this, clientSocket_));
 
         connect(clientSocket_, &QTcpSocket::disconnected,
                 this, &Watchdog::disconnected);
@@ -68,11 +69,8 @@ void Watchdog::onClientConnected_()
     }
 }
 
-void Watchdog::onClientDisconnected_()
+void Watchdog::onClientDisconnected_(QTcpSocket * const clientSocket)
 {
-    QTcpSocket *const clientSocket =
-            dynamic_cast<QTcpSocket *>(sender());
-
     assert(clientSocket == clientSocket_);
 
     restartClient_();
@@ -87,11 +85,9 @@ void Watchdog::onClientDisconnected_()
     //    updateUserList();
 }
 
-void Watchdog::onDataReceived_()
+void Watchdog::onDataReceived_(QTcpSocket * const clientSocket)
 {
     qDebug() << "Data received";
-    QTcpSocket *const clientSocket =
-            dynamic_cast<QTcpSocket *>(sender());
 
     assert(clientSocket == clientSocket_);
     qDebug() << "Bytes available:" << clientSocket->bytesAvailable();

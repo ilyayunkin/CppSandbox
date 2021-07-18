@@ -27,8 +27,8 @@ signals:
 
 private slots:
     void onClientConnected_();
-    void onClientDisconnected_();
-    void onDataReceived_();
+    void onClientDisconnected_(QTcpSocket *const clientSocket);
+    void onDataReceived_(QTcpSocket *const clientSocket);
     void restartClient_();
 };
 
