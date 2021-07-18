@@ -34,10 +34,10 @@ constexpr auto operator"" _g(long double value){return gramm(value);}
 constexpr auto operator"" _g(unsigned long long value){return gramm(value);}
 
 /// Операторы вывода в поток (для консоли)
-std::ostream & operator<<(std::ostream &s, gramm g){s << g.value() << " gramm";}
-std::ostream & operator<<(std::ostream &s, killogramm kg){s << kg.value() << " kilogramm";}
+std::ostream & operator<<(std::ostream &s, gramm g){return s << g.value() << " gramm";}
+std::ostream & operator<<(std::ostream &s, killogramm kg){return s << kg.value() << " kilogramm";}
 
-int main(int argc, char *argv[])
+int main()
 {
     // Эти преобразования не работают, т.к. конструкторы объявлены explicit -
     // содавать объекты можно только с явным указанием типов, что и делается внутри операторов литералов
