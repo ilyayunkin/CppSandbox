@@ -8,6 +8,9 @@ struct gramm
     constexpr explicit gramm(value_type value) : value_(value){}
     constexpr value_type value() const{return value_;};
 
+    /// Арифметические операции
+    friend constexpr gramm operator+(const gramm lhs, const gramm rhs){return gramm(lhs.value_ + rhs.value_);}
+    friend constexpr gramm operator-(const gramm lhs, const gramm rhs){return gramm(lhs.value_ - rhs.value_);}
 private:
     value_type value_ = 0.;
 };
@@ -57,12 +60,15 @@ int main()
     constexpr auto mass4 = 2_g;
     std::cout << mass4 << "\r\n";
 
-
     /// пробуем преобразования:
     constexpr gramm massGramm = 1_kg;
     std::cout << massGramm << "\r\n";
     constexpr killogramm massKg = 1_g;
     std::cout << massKg << "\r\n";    
+
+    /// Арифметика
+    constexpr killogramm sum = 5_g + 6_kg - 3.5_kg;
+    std::cout << sum << "\r\n";
 
     std::cout.flush();
 }
