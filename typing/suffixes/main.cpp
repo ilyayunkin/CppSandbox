@@ -9,11 +9,18 @@ struct gramm
     constexpr value_type value() const{return value_;};
 
     /// Арифметические операции
-    friend constexpr gramm operator+(const gramm lhs, const gramm rhs){return gramm(lhs.value_ + rhs.value_);}
-    friend constexpr gramm operator-(const gramm lhs, const gramm rhs){return gramm(lhs.value_ - rhs.value_);}
-    friend constexpr gramm operator*(const value_type lhs, const gramm rhs){return gramm(lhs * rhs.value_);}
-    friend constexpr gramm operator*(const gramm lhs, const value_type rhs){return gramm(rhs * lhs.value_);}
-    friend constexpr gramm operator/(const gramm lhs, const value_type rhs){return gramm(lhs.value_ / rhs);}
+    constexpr gramm &operator+=(const gramm rhs){value_ += rhs.value_; return *this;}
+    friend constexpr gramm operator+(const gramm lhs, const gramm rhs){return gramm(lhs)+= rhs;}
+
+    constexpr gramm &operator-=(const gramm rhs){value_ -= rhs.value_; return *this;}
+    friend constexpr gramm operator-(const gramm lhs, const gramm rhs){return gramm(lhs)-= rhs;}
+
+    constexpr gramm &operator*=(const value_type rhs){value_ *= rhs; return *this;}
+    friend constexpr gramm operator*(const value_type lhs, const gramm rhs){return gramm(rhs)*=lhs;}
+    friend constexpr gramm operator*(const gramm lhs, const value_type rhs){return gramm(lhs)*=rhs;}
+
+    constexpr gramm &operator/=(const value_type rhs){value_ /= rhs; return *this;}
+    friend constexpr gramm operator/(const gramm lhs, const value_type rhs){return gramm(lhs)/=rhs;}
 private:
     value_type value_ = 0.;
 };
@@ -67,7 +74,7 @@ int main()
     constexpr gramm massGramm = 1_kg;
     std::cout << massGramm << "\r\n";
     constexpr killogramm massKg = 1_g;
-    std::cout << massKg << "\r\n";    
+    std::cout << massKg << "\r\n";
 
     /// Арифметика
     constexpr killogramm sum = 5_g + 6_kg - 3.5_kg;
