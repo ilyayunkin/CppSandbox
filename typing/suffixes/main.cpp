@@ -13,6 +13,7 @@ struct gramm
     friend constexpr gramm operator-(const gramm lhs, const gramm rhs){return gramm(lhs.value_ - rhs.value_);}
     friend constexpr gramm operator*(const value_type lhs, const gramm rhs){return gramm(lhs * rhs.value_);}
     friend constexpr gramm operator*(const gramm lhs, const value_type rhs){return gramm(rhs * lhs.value_);}
+    friend constexpr gramm operator/(const gramm lhs, const value_type rhs){return gramm(lhs.value_ / rhs);}
 private:
     value_type value_ = 0.;
 };
@@ -74,6 +75,9 @@ int main()
 
     constexpr killogramm sum2 = 2 * (5_g + 6_kg - 3.5_kg) * 5.8;
     std::cout << sum2 << "\r\n";
+
+    constexpr killogramm sum3 = 2 * (5_g + 6_kg - 3.5_kg) * 5.8 / 8;
+    std::cout << sum3 << "\r\n";
 
     std::cout.flush();
 }
